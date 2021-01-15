@@ -2,8 +2,6 @@ import dis
 import torch
 import inspect
 import operator
-import builtins
-from typing import Union
 
 from .graph import magic_methods, reflectable_magic_methods, Graph
 from typing import Tuple, Dict, Optional, Iterable, Any, Iterator
@@ -170,12 +168,6 @@ class Proxy:
         else:
             return self.tracer.create_proxy('call_function', orig_method, args, kwargs,
                                             name=self.tracer.graph._target_to_str(orig_method.__name__))
-
-def len(item: Any) -> Union[Proxy, int]:
-    if not isinstance(item, Proxy):
-        return builtins.len(item)
-
-    return item.tracer.create_proxy('call_function', builtins.len, (item,), {})
 
 class Attribute(Proxy):
     def __init__(self, root: Proxy, attr: str):
